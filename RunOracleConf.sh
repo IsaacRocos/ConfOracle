@@ -41,7 +41,7 @@ echo "-----------------------------------------"
 
 seLnxNewStatStr="SELINUX=permissive";
 echo ">> Cambiando configuración de SELinux";
-cat /etc/selinux/config | sed -e "s/SELINUX=enforcing/${seLnxNewStatStr}/g" >> output
+cat /etc/selinux/config | sed -e "s/SELINUX=enforcing/${seLnxNewStatStr}/g" > /etc/selinux/output
 #borrando archivo config anterior
 rm /etc/selinux/config
 rename -v output config /etc/selinux/output
