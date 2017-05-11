@@ -3,12 +3,22 @@
 
 #Falta modificacion en archivos hosts y hostname
 
+echo "CONFIGURANDO PARA INSTALACION ORACLE"
+
+echo "-----------------------------------------"
+echo ">> Actualizando hostname...";
+echo "fedora25.localdomain" >> /etc/hostname
+echo ""
+cat /etc/hostname
+
+echo "-----------------------------------------"
 echo ">> Copiando parametros de kernel...";
 cp 98-oracle.conf /etc/sysctl.d/;
 #Actualizar los parametros:
 echo ">> #/sbin/sysctl -p"
 /sbin/sysctl -p;
 echo ">> Parametros cargados:";
+echo ""
 cat /etc/sysctl.d/98-oracle.conf
 
 echo ">> Deshabilitando Firewall...";
@@ -17,7 +27,18 @@ systemctl disable firewalld;
 echo ">> Estado de firewall (presiona q para continuar si no se muestra el prompt): ";
 systemctl status firewalld
 
+
+echo "-----------------------------------------"
+echo ">> Copiando parametros de Shell...";
+echo ">> cp	oracle-rdbms-server-12cR1-preinstall.conf  /etc/security/limits.d/"
+cp 	oracle-rdbms-server-12cR1-preinstall.conf  /etc/security/limits.d/
+echo ">> Parametros cargados:";
 echo ""
+cat /etc/security/limits.d/oracle-rdbms-server-12cR1-preinstall.conf
+
+
+echo "-----------------------------------------"
+
 seLnxNewStatStr="SELINUX=permissive";
 echo ">> Cambiando configuración de SELinux";
 cat /etc/selinux/config | sed -e "s/SELINUX=enforcing/${seLnxNewStatStr}/g" >> output
@@ -26,7 +47,7 @@ rm /etc/selinux/config
 rename -v output config /etc/selinux/output
 echo ">> El estado de SELinux ahora es  "; sestatus
 
-echo ""
+echo "-----------------------------------------"
 echo ">> Instalando paquetes requeridos..."
 echo ">> MATE Desktop";
 dnf groupinstall "MATE Desktop" -y
@@ -39,7 +60,7 @@ dnf groupinstall "System Tools" -y
 echo ">> Firefox";
 dnf install firefox -y
 
-echo ""
+echo "-----------------------------------------"
 echo ">> Instalando paquetes requeridos adicionales..."
 dnf install binutils -y
 dnf install compat-libstdc++-33 -y
@@ -79,7 +100,7 @@ dnf install unixODBC -y
 dnf install unixODBC-devel -y
 dnf install zlib-devel -y
 
-echo ""
+echo "-----------------------------------------"
 echo ">> Creando Grupos y usuario Oracle"
 groupadd -g 54321 oinstall
 groupadd -g 54322 dba
@@ -94,21 +115,22 @@ groupadd -g 54329 asmadmin
 useradd -u 54321 -g oinstall -G dba,oper oracle
 passwd oracle
 
-echo ""
+echo "-----------------------------------------"
 echo ">> Creando Carpetas de instalacíon de ORACLE"
 
 mkdir -p /u01/app/oracle/product/12.1.0.2/db_1
 chown -R oracle:oinstall /u01
 chmod -R 775 /u01
 
-echo ""
+echo "-----------------------------------------"
 echo ">> Cambiando informacion de distribucion Fedora -> RedHat"
 echo "redhat release 7" > /etc/redhat-release
 
 echo ">> #cat /etc/redhat-release"
+echo ""
 cat /etc/redhat-release
 
-echo ""
+echo "-----------------------------------------"
 echo ">> Cambiando a Usuario Oracle... Para continuar ejecuta el script: LoadEnVar.sh. Bye guapa! :) "
 su oracle
 
